@@ -80,19 +80,18 @@ type ActuacionesPage struct {
 }
 
 type Actuacion struct {
-	EsCedula               int          `json:"esCedula"`
-	Codigo                 string       `json:"codigo"`
-	ActuacionesNotificadas string       `json:"actuacionesNotificadas"`
-	Numero                 int          `json:"-"`
-	FechaFirma             int          `json:"fechaFirma"`
-	Firmantes              string       `json:"firmantes"`
-	ActId                  int          `json:"actId"`
-	Titulo                 string       `json:"titulo"`
-	FechaNotificacion      int          `json:"fechaNotificacion"`
-	PoseeAdjunto           int          `json:"poseeAdjunto"`
-	CUIJ                   string       `json:"cuij"`
-	Anio                   int          `json:"-"`
-	Documentos             []*Documento `json:"documentos"`
+	EsCedula               int    `json:"esCedula"`
+	Codigo                 string `json:"codigo"`
+	ActuacionesNotificadas string `json:"actuacionesNotificadas"`
+	Numero                 int    `json:"-"`
+	FechaFirma             int    `json:"fechaFirma"`
+	Firmantes              string `json:"firmantes"`
+	ActId                  int    `json:"actId"`
+	Titulo                 string `json:"titulo"`
+	FechaNotificacion      int    `json:"fechaNotificacion"`
+	PoseeAdjunto           int    `json:"poseeAdjunto"`
+	CUIJ                   string `json:"cuij"`
+	Anio                   int    `json:"-"`
 }
 
 func (actuacion *Actuacion) Id() string {
@@ -260,7 +259,7 @@ func (ficha *Ficha) getActuacionesPage(pagenum int) (*ActuacionesPage, error) {
 	return &page, nil
 }
 
-func (ficha *Ficha) getActuaciones() ([]*Actuacion, error) {
+func (ficha *Ficha) GetActuaciones() ([]*Actuacion, error) {
 	actuaciones := make([]*Actuacion, 0, 1)
 	pagenum := 0
 	for {
@@ -273,9 +272,6 @@ func (ficha *Ficha) getActuaciones() ([]*Actuacion, error) {
 		}
 		actuaciones = append(actuaciones, page.Content...)
 		pagenum++
-	}
-	for _, act := range actuaciones {
-		act.Documentos, _ = fetchDocumentos(ficha, act)
 	}
 	return actuaciones, nil
 }
@@ -324,6 +320,7 @@ func GetAdjuntosCedula(url string, ficha *Ficha, actuacion *Actuacion) ([]*Docum
 	}
 	return documentos, nil
 }
+
 func GetAdjuntosNoCedula(url string, ficha *Ficha, actuacion *Actuacion) ([]*Documento, error) {
 	u := fmt.Sprintf("https://eje.juscaba.gob.ar/iol-api/api/public/expedientes/actuaciones/adjuntos?actId=%d&expId=%v&accesoMinisterios=false",
 		actuacion.ActId,
@@ -377,7 +374,7 @@ func GetAdjuntos(url string, ficha *Ficha, actuacion *Actuacion) ([]*Documento, 
 	}
 }
 
-func fetchDocumentos(ficha *Ficha, actuacion *Actuacion) ([]*Documento, error) {
+func FetchDocumentos(ficha *Ficha, actuacion *Actuacion) ([]*Documento, error) {
 	documentos := make([]*Documento, 0)
 	url := fmt.Sprintf(
 		"https://eje.juscaba.gob.ar/iol-api/api/public/expedientes/actuaciones/pdf?datos=%%7B%%22actId%%22:%d,%%22expId%%22:%d,%%22esNota%%22:false,%%22cedulaId%%22:null,%%22ministerios%%22:false%%7D",
